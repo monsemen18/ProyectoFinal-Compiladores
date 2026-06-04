@@ -21,6 +21,8 @@ public:
 
 private:
     int line = 1;
+public:
+    int getLine() const { return line; }
 };
 
 }

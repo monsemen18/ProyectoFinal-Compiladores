@@ -83,6 +83,13 @@
 // ========================================================
 %type <attr> P, H, D, T, B, A, L, F, G, R, S, E, N, M, C, Z
 
+%left OR
+%left AND
+%left IGUAL NO_IGUAL
+%left MAYOR_QUE MENOR_QUE MAYOR_IGUAL MENOR_IGUAL
+%left MAS MENOS
+%left MULT DIV MOD 
+
 // ========================================================
 // Símbolo inicial
 // ========================================================
@@ -95,12 +102,14 @@
 // ============================================================
 
 // P → H
-P : {
+P :
+    {
         dir = 0;
         pilaTs.push(new SymTab());
-  CodeGen::reset();
+        CodeGen::reset();
     }
-    H; 
+    H
+  ; 
 
 // H → D H 
 //    | ε 
@@ -109,9 +118,9 @@ H : D
         std::cout << std::endl;
         tablaTipos.print();
         std::cout << std::endl;
-      std::cout << "Codigo intermedio TAC:" << std::endl;
-      CodeGen::print(std::cout);
-      std::cout << std::endl;
+        std::cout << "Codigo intermedio TAC:" << std::endl;
+        CodeGen::print(std::cout);
+        std::cout << std::endl;
         std::cout << "Tabla de simbolos global:" << std::endl;
         pilaTs.top()->print();
     }
@@ -125,7 +134,13 @@ H : D
 // D → T L ;
 //    | struct id { D }; 
 //    | def T id ( F ) { D R } 
-D : 
+D : T 
+    L 
+    {
+        $2.tipo = $1.tipo;
+        currentType = $2.tipo;
+    }
+    SEMICOLON
   ;
 
 // T → B A
