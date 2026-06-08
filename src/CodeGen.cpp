@@ -54,7 +54,7 @@ void CodeGen::print(std::ostream& out) {
 		}
 
 		if (tac.getOp() == "param") {
-			out << "param " << tac.getRes() << std::endl;
+			out << "param " << tac.getArg1() << std::endl;
 			continue;
 		}
 
@@ -71,7 +71,15 @@ void CodeGen::print(std::ostream& out) {
 			out << "return " << tac.getRes() << std::endl;
 			continue;
 		}
-
+        // Asignaciones simples
+        if (tac.getOp() == "=") {
+            out << tac.getRes() << " = " << tac.getArg1() << std::endl;
+            continue;
+        }
+        if (tac.getOp() == "inttofloat" || tac.getOp() == "floattoint") {
+            out << tac.getRes() << " = " << tac.getOp() << " " << tac.getArg1() << std::endl;
+            continue;
+        }
 		if (tac.getRes().empty()) {
 			out << tac.getOp();
 			if (!tac.getArg1().empty()) {
@@ -83,9 +91,8 @@ void CodeGen::print(std::ostream& out) {
 			out << std::endl;
 			continue;
 		}
-
 		if (tac.getArg2().empty()) {
-			out << tac.getRes() << " = " << tac.getArg1() << ' ' << tac.getOp() << std::endl;
+			out << tac.getRes() << " = " << tac.getOp() << " " << tac.getArg1() << std::endl;
 		} else {
 			out << tac.getRes() << " = " << tac.getArg1() << ' ' << tac.getOp() << ' ' << tac.getArg2() << std::endl;
 		}

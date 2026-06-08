@@ -1,8 +1,16 @@
-int a, b;  
+int a, b, c;
+float x, y, z;
 
-int[4] c;
+def int main() {
+    a = 10;
+    b = 5;
+    c = 2;
+    x = 1.5;
 
-a = 4;
-b = 9;
+    a = a + b * c;
+    c = (a + b) * c;
+    z = (a + b) * x;
+    y = z + (x / 2.0);
 
-suma1 = a + b;
+    return 0;
+}
