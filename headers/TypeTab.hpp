@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include "SymTab.hpp"
 
 using namespace std;
 
@@ -13,11 +14,15 @@ struct Type {
     int tam;           // Tamaño en bytes
     int numElems;      // Número de elementos (para arreglos), -1 si no aplica
     int tipoBase;      // ID del tipo base (para arreglos), -1 si no aplica
+    SymTab* ts;
 
     Type() : name(""), tam(0), numElems(-1), tipoBase(-1) {}
     Type(string name, int tam) : name(name), tam(tam), numElems(-1), tipoBase(-1) {}
     Type(string name, int tam, int numElems, int tipoBase)
         : name(name), tam(tam), numElems(numElems), tipoBase(tipoBase) {}
+
+    Type(string name, int tam, SymTab* ts) 
+        : name(name), tam(tam), numElems(-1), tipoBase(-1), ts(ts) {}
 };
 
 class TypeTab {
@@ -40,7 +45,7 @@ public:
 
     // Agrega un tipo struct con su tamaño total
     // Retorna el ID asignado al nuevo tipo
-    int addStructType(int tam);
+    int addStructType(int tam, SymTab* ts);
 
     // Obtiene el tamaño de un tipo dado su ID
     int getTam(int id);
@@ -50,6 +55,12 @@ public:
 
     // Imprime la tabla de tipos (para depuración)
     void print();
+
+    // Obtiene el ID del tipo base de un arreglo
+    int getTipoBase(int id);
+
+    // Obtiene la tabla de símbolos interna de un struct
+    SymTab* getTS(int id);
 };
 
 #endif

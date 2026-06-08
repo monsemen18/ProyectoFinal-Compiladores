@@ -50,6 +50,9 @@ public:
     // Retorna el mapa completo de símbolos (para depuración/impresión)
     map<string, Sym> getSyms();
 
+    // Obtiene la lista de tipos de parámetros de una función
+    vector<int> getArgs(string id);
+
     // Imprime la tabla de símbolos (para depuración)
     void print();
 };

@@ -65,6 +65,15 @@ map<string, Sym> SymTab::getSyms() {
     return syms;
 }
 
+// Obtiene la lista de parámetros de un símbolo
+vector<int> SymTab::getArgs(string id) {
+    if (existe(id)) {
+        return syms[id].params;
+    }
+    cerr << "Error: símbolo '" << id << "' no encontrado." << endl;
+    return vector<int>(); // Retorna un vector vacío en caso de error
+}
+
 // Imprime la tabla de símbolos
 void SymTab::print() {
     cout << "========== TABLA DE SIMBOLOS ==========" << endl;

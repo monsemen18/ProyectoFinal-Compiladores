@@ -41,11 +41,29 @@ int TypeTab::addArrayType(int numElems, int tipoBase) {
 // Parámetros:
 //   tam: tamaño total del struct (suma de tamaños de sus campos)
 // Retorna: el ID del nuevo tipo creado
-int TypeTab::addStructType(int tam) {
-    types[nextId] = Type("struct", tam);
+int TypeTab::addStructType(int tam, SymTab* ts) {
+    types[nextId] = Type("struct", tam, ts);
     int idAsignado = nextId;
     nextId++;
     return idAsignado; 
+}
+
+// Obtiene el tipo base de un arreglo
+int TypeTab::getTipoBase(int id) {
+    if (types.find(id) != types.end()) {
+        return types[id].tipoBase;
+    }
+    cerr << "Error: tipo con ID " << id << " no encontrado en tabla de tipos." << endl;
+    return -1;
+}
+
+// Obtiene la tabla de símbolos interna de un struct
+SymTab* TypeTab::getTS(int id) {
+    if (types.find(id) != types.end()) {
+        return types[id].ts;
+    }
+    cerr << "Error: tipo con ID " << id << " no encontrado en tabla de tipos." << endl;
+    return nullptr;
 }
 
 // Obtiene el tamaño de un tipo dado su ID
