@@ -1,0 +1,12 @@
+def int inicializar() {
+    int x;
+    x = 10;
+    return x;
+}
+
+def int main() {
+    int resultado;
+    // Error: Se llama a la función sin pasarle argumentos
+    resultado = inicializar(); 
+    return 0;
+}

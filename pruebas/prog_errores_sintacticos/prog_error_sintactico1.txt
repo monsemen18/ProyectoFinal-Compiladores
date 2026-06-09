@@ -1,0 +1,10 @@
+struct Medidor {
+    float valor;
+    int estado;
+} m1, m2; 
+
+def int main() {
+    int i;
+    i = 0;
+    return 0;
+}

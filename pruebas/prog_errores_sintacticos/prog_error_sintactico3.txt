@@ -1,0 +1,11 @@
+def int main() {
+    int x;
+    x = 10;
+    
+    if (x > 5) {
+        int y;
+        y = 20;
+    // Falta una llave de cierre aquí para el bloque del IF
+    
+    return 0;
+}
