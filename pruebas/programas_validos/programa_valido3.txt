@@ -1,0 +1,35 @@
+struct Punto {
+    float x;
+    float y;
+};
+
+struct Punto p1, p2;
+
+struct Rectangulo {
+    float base;
+    float altura;
+    float area;
+};
+
+struct Rectangulo mi_rectangulo;
+
+def float calcularArea(float b, float h) {
+    float a;
+    a = b * h;
+    return a;
+}
+
+def int main() {
+    p1.x = 0.0;
+    p1.y = 0.0;
+
+    p2.x = 5.5;
+    p2.y = 10.2;
+
+    mi_rectangulo.base = p2.x - p1.x;
+    mi_rectangulo.altura = p2.y - p1.y;
+
+    mi_rectangulo.area = calcularArea(mi_rectangulo.base, mi_rectangulo.altura);
+
+    return 0;
+}

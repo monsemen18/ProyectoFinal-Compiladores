@@ -1,0 +1,30 @@
+int[10] numeros;
+
+def int main() {
+    int i;
+    int j;
+    int temp;
+    
+    numeros[0] = 45;
+    numeros[1] = 12;
+    numeros[2] = 89;
+    numeros[3] = 1;
+    numeros[4] = 34;
+    numeros[5] = 23;
+    numeros[6] = 90;
+    numeros[7] = 5;
+    numeros[8] = 67;
+    numeros[9] = 10;
+    
+    for (i = 0; i < 9; i = i + 1) {
+        for (j = 0; j < 9 - i; j = j + 1) {
+            if (numeros[j] > numeros[j + 1]) {
+                temp = numeros[j];
+                numeros[j] = numeros[j + 1];
+                numeros[j + 1] = temp;
+            }
+        }
+    }
+    
+    return 0;
+}

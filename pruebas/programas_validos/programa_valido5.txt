@@ -1,0 +1,33 @@
+int limite;
+
+def int calcularFactorial(int n) {
+    int f;
+    int k;
+    f = 1;
+    
+    if (n == 0 || n == 1) {
+        return 1;
+    } else {
+        for (k = 2; k <= n; k = k + 1) {
+            f = f * k;
+        }
+    }
+    
+    return f;
+}
+
+def int main() {
+    int contador;
+    int sumaFactoriales;
+    
+    limite = 5;
+    sumaFactoriales = 0;
+    contador = 1;
+    
+    while (contador <= limite) {
+        sumaFactoriales = sumaFactoriales + calcularFactorial(contador);
+        contador = contador + 1;
+    }
+    
+    return sumaFactoriales;
+}
