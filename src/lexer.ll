@@ -80,6 +80,7 @@ WSPC    [ \t\r]+
                 return Parser::token::ID;
             }
 
+"//".* { /* Ignora los comentarios de una sola linea */ }
 {WSPC}      { /* Ignorar espacios en blanco */ }
 "\n"        { line++; }
 .           { std::cerr << "Error léxico: carácter inesperado '" << yytext << "' en línea " << line << std::endl; }

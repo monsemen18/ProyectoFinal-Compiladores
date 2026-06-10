@@ -667,12 +667,22 @@ E : E MAS E
     {
         std::string id = $1;
         if (pilaTs.bottom()->existe(id) && pilaTs.bottom()->getCat(id) == "func") {
-            $$.tipo = pilaTs.bottom()->getType(id);
-            std::string t = CodeGen::newTemp();
-            strcpy($$.dir, t.c_str());
-            CodeGen::emit("call", id, std::to_string(argsList.size()), $$.dir);
+            std::vector<int> paramsEsperados = pilaTs.bottom()->getArgs(id);
+            
+            // Comparamos si lo que mandó el usuario (argsList) coincide con lo que pide la función
+            if (paramsEsperados == argsList) {
+                $$.tipo = pilaTs.bottom()->getType(id);
+                std::string t = CodeGen::newTemp();
+                strcpy($$.dir, t.c_str());
+                CodeGen::emit("call", id, std::to_string(argsList.size()), $$.dir);
+            } else {
+                std::cerr << "Error Semantico: La lista de parametros no coincide con la lista de argumentos en la funcion '" << id << "'" << std::endl;
+                $$.tipo = 0;
+            }
+
         } else {
-            std::cerr << "Error: El identificador no es una función declarada" << std::endl;
+            std::cerr << "Error Semantico: El identificador '" << id << "' no es una funcion declarada" << std::endl;
+            $$.tipo = 0;
         }
         if ($1) free($1);
         argsList.clear(); 

@@ -1,4 +1,5 @@
 #include "headers/SymTab.hpp"
+#include <iomanip>
 
 SymTab::SymTab() {}
 
@@ -18,7 +19,6 @@ bool SymTab::addSym(string id, int dir, int tipo, string cat) {
 
 // Versión para funciones (incluye lista de parámetros)
 bool SymTab::addSym(string id, int dir, int tipo, string cat, vector<int> params) {
-    // TODO: Implementar (similar al anterior pero usando el constructor con params)
     if(existe(id)) {
         return false;
     } 
@@ -77,13 +77,40 @@ vector<int> SymTab::getArgs(string id) {
 // Imprime la tabla de símbolos
 void SymTab::print() {
     cout << "========== TABLA DE SIMBOLOS ==========" << endl;
-    cout << "Nombre\t\tDir\tTipo\tCat" << endl;
-    cout << "------\t\t---\t----\t---" << endl;
+    
+    cout << left 
+         << setw(18) << "Nombre" 
+         << setw(8)  << "Dir" 
+         << setw(8)  << "Tipo" 
+         << setw(10) << "Cat" 
+         << "Params" << endl;
+         
+    cout << "------------------------------------------------" << endl;
+    
     for (auto& par : syms) {
-        cout << par.first << "\t\t"
-            << par.second.dir << "\t"
-            << par.second.tipo << "\t"
-            << par.second.cat << endl;
+        cout << left 
+             << setw(18) << par.first 
+             << setw(8)  << par.second.dir 
+             << setw(8)  << par.second.tipo 
+             << setw(10) << par.second.cat;
+             
+        // Lógica para imprimir el vector de parámetros
+        if (!par.second.params.empty()) {
+            cout << "[";
+            for (size_t i = 0; i < par.second.params.size(); ++i) {
+                cout << par.second.params[i];
+                if (i < par.second.params.size() - 1) {
+                    cout << ", ";
+                }
+            }
+            cout << "]";
+        } else if (par.second.cat == "func") {
+            cout << "[]";
+        } else {
+            cout << "-";
+        }
+        
+        cout << endl;
     }
-    cout << "========================================" << endl;
+    cout << "================================================" << endl;
 }
