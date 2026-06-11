@@ -3,8 +3,8 @@
 ## Equipo 
 1. Méndez Camacho Monserrat - 424490034
 2. Rodríguez Nevarez Edwin - 312227441
-3. Carrillo Gonzalez Luis Israel - 21050324
-4. Reyna Méndez Cristian Ignacio - 20140579
+3. Carrillo Gonzalez Luis Israel - 321050324
+4. Reyna Méndez Cristian Ignacio - 320140579
 
 ## Descripción
 
