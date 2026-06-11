@@ -1,24 +1,24 @@
 # Front-end de Compilador
 
 ## Equipo 
-1. Mendez Camacho Monserrat
-2. jjd
-3. dk
-4. kd
+1. Méndez Camacho Monserrat - 424490034
+2. Rodríguez Nevarez Edwin - 312227441
+3. Carrillo Gonzalez Luis Israel - 21050324
+4. Reyna Méndez Cristian Ignacio - 20140579
 
 ## Descripción
 
-Un front-end de compilador para un subconjunto de un lenguaje tipo C 
+Un front-end de compilador para un subconjunto de un lenguaje tipo C. 
 
 ## Caracteristicas
 
-- análisis léxico
-- análisis sintáctico
-- manejo de tablas de símbolos
-- manejo de tabla de tipos
-- verificación de tipos
-- manejo de ámbitos
-- generación de código intermedio de tres direcciones
+- Análisis léxico
+- Análisis sintáctico
+- Manejo de tablas de símbolos
+- Manejo de tabla de tipos
+- Verificación de tipos
+- Manejo de ámbitos
+- Generación de código intermedio de tres direcciones
 
 ## Estructura del proyecto
 
