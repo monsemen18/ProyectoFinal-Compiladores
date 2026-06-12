@@ -3,24 +3,28 @@
 #include <iomanip>
 #include <iostream>
 
-std::vector<Tac> CodeGen::code;
-int CodeGen::tempCount = 0;
+std::vector<Tac> CodeGen::code;		// incia con la lista de cuádruplas vacía
+int CodeGen::tempCount = 0;	
 int CodeGen::labelCount = 0;
 
+// Limpia las instrucciones generadas y reinicia los contadores
 void CodeGen::reset() {
 	code.clear();
 	tempCount = 0;
 	labelCount = 0;
 }
 
+// Generador de temporales
 std::string CodeGen::newTemp() {
 	return "t" + std::to_string(++tempCount);
 }
 
+// Generador de nombres de etiquetas
 std::string CodeGen::newLabel() {
 	return "L" + std::to_string(++labelCount);
 }
 
+// Crea una Cuádrupla con los parámetros dados y la inserta al final de la lista
 void CodeGen::emit(const std::string& op,
 				const std::string& arg1,
 				const std::string& arg2,
@@ -28,14 +32,17 @@ void CodeGen::emit(const std::string& op,
 	code.emplace_back(op, arg1, arg2, res);
 }
 
+// Agrega un objeto Cuádrupla ya existente a la lista
 void CodeGen::emit(const Tac& tac) {
 	code.push_back(tac);
 }
 
+// Retorna la referencia a la lista 
 const std::vector<Tac>& CodeGen::getCode() {
 	return code;
 }
 
+// Formatea el código de tres direcciones iterando sobre las instrucciones 
 void CodeGen::print(std::ostream& out) {
 	for (const Tac& tac : code) {
 		if (tac.getOp() == "label") {
@@ -71,15 +78,18 @@ void CodeGen::print(std::ostream& out) {
 			out << "return " << tac.getRes() << std::endl;
 			continue;
 		}
-        // Asignaciones simples
+
+        // Asignaciones simples, ej: a = 10, x = t1
         if (tac.getOp() == "=") {
             out << tac.getRes() << " = " << tac.getArg1() << std::endl;
             continue;
         }
+
         if (tac.getOp() == "inttofloat" || tac.getOp() == "floattoint") {
             out << tac.getRes() << " = " << tac.getOp() << " " << tac.getArg1() << std::endl;
             continue;
         }
+
 		if (tac.getRes().empty()) {
 			out << tac.getOp();
 			if (!tac.getArg1().empty()) {
@@ -91,6 +101,7 @@ void CodeGen::print(std::ostream& out) {
 			out << std::endl;
 			continue;
 		}
+		
 		if (tac.getArg2().empty()) {
 			out << tac.getRes() << " = " << tac.getOp() << " " << tac.getArg1() << std::endl;
 		} else {

@@ -3,6 +3,8 @@
     #include "headers/Lexer.hpp"
 
     #define YY_DECL int C1::Lexer::lex(C1::Parser::semantic_type *yylval)
+    
+    extern int contador_errores;
 %}
 
 %option c++ noyywrap outfile="Lexer.cpp" yyclass="Lexer"
@@ -83,7 +85,9 @@ WSPC    [ \t\r]+
 "//".* { /* Ignora los comentarios de una sola linea */ }
 {WSPC}      { /* Ignorar espacios en blanco */ }
 "\n"        { line++; }
-.           { std::cerr << "Error léxico: carácter inesperado '" << yytext << "' en línea " << line << std::endl; }
+.           { std::cerr << "Error léxico: carácter inesperado " << yytext << " en línea " << line << std::endl; 
+            contador_errores++;
+            }
 
 <<EOF>>     { yyterminate(); }
 

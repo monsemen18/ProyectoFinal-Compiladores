@@ -30,6 +30,8 @@
     // Definir yylex para que Bison llame a nuestro Lexer
     #define yylex(yylval) lexer->lex(yylval)
 
+    extern int contador_errores; 
+
     // ========================================================
     // Variables globales del esquema de traducción
     // ========================================================
@@ -179,7 +181,8 @@ D : T L SEMICOLON
             pilaOffset.push(dir);
             dir = 0;
         } else {
-            std::cerr << "Error: Estructura duplicada" << std::endl;
+            std::cerr << "Error Semantico: Estructura duplicada" << std::endl;
+            contador_errores++;
         }
     }
     H RBRACE SEMICOLON
@@ -203,7 +206,8 @@ D : T L SEMICOLON
             CodeGen::emit("label", "", "", id);
             listaParams.clear();
         } else {
-            std::cerr << "Error: Función duplicada" << std::endl;
+            std::cerr << "Error Semantico: Función duplicada" << std::endl;
+            contador_errores++;
         }
     }
     F RPAREN LBRACE H R RBRACE
@@ -243,6 +247,7 @@ B : INT   { $$.tipo = tablaTipos.getId("int");   $$.base = $$.tipo; currentType 
             currentType = idStruct;
         } else {
             std::cerr << "Error: Struct no declarado '" << id << "'" << std::endl;
+            contador_errores++;
             $$.tipo = 0; // 0 = int. Se pone un tipo seguro para evitar colapsar la memoria basura
             currentType = 0;
         }
@@ -255,7 +260,8 @@ A : LBRACKET INTLIT RBRACKET A
         if ($2 > 0) {
             $$.tipo = tablaTipos.addArrayType($2, $4.tipo);
         } else {
-            std::cerr << "Error: El índice debe ser mayor a cero" << std::endl;
+            std::cerr << "Error Semantico: El índice debe ser mayor a cero" << std::endl;
+            contador_errores++;
             $$.tipo = currentType;
         }
         $$.base = currentType;
@@ -274,7 +280,8 @@ L : L COMMA ID
             pilaTs.top()->addSym(id, dir, currentType, "var");
             dir += tablaTipos.getTam(currentType);
         } else {
-            std::cerr << "Error: Variable duplicada" << std::endl;
+            std::cerr << "Error Semantico: Variable duplicada" << std::endl;
+            contador_errores++;
         }
         if ($3) free($3);
     }
@@ -285,7 +292,8 @@ L : L COMMA ID
             pilaTs.top()->addSym(id, dir, currentType, "var");
             dir += tablaTipos.getTam(currentType);
         } else {
-            std::cerr << "Error: Variable duplicada" << std::endl;
+            std::cerr << "Error Semantico: Variable duplicada" << std::endl;
+            contador_errores++;
         }
         if ($1) free($1);
     }
@@ -301,7 +309,8 @@ G : G COMMA T ID
             dir += tablaTipos.getTam($3.tipo);
             listaParams.push_back($3.tipo);
         } else {
-            std::cerr << "Error: Parámetro duplicado" << std::endl;
+            std::cerr << "Error Semantico: Parámetro duplicado" << std::endl;
+            contador_errores++;
         }
         if ($4) free($4);
     }
@@ -313,7 +322,8 @@ G : G COMMA T ID
             dir += tablaTipos.getTam($1.tipo);
             listaParams.push_back($1.tipo);
         } else {
-            std::cerr << "Error: Parámetro duplicado" << std::endl;
+            std::cerr << "Error Semantico: Parámetro duplicado" << std::endl;
+            contador_errores++;
         }
         if ($2) free($2);
     }
@@ -327,13 +337,15 @@ S_ASIG : ID ASIGNACION E
         int tipoDest = -1;
         if (pilaTs.top()->existe(id)) tipoDest = pilaTs.top()->getType(id);
         else if (pilaTs.bottom()->existe(id)) tipoDest = pilaTs.bottom()->getType(id);
-        else std::cerr << "Error: El id no fue declarado: " << id << std::endl;
+        else std::cerr << "Error Semantico: El id no fue declarado: " << id << std::endl;
+        contador_errores++;
 
         if (tipoDest != -1 && compatibles(tipoDest, $3.tipo)) {
             std::string a1 = reducir($3.dir, $3.tipo, tipoDest);
             CodeGen::emit("=", a1, "", id);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl;
+            contador_errores++;
         }
         if ($1) free($1);
     }
@@ -344,7 +356,8 @@ S_ASIG : ID ASIGNACION E
             std::string res = std::string($1.baseStr) + "[" + $1.dir + "]";
             CodeGen::emit("=", a1, "", res);
         } else {
-            std::cerr << "Error: Tipos incompatibles en arreglo" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles en arreglo" << std::endl;
+            contador_errores++;
         }
     }
   | Z ASIGNACION E 
@@ -354,7 +367,8 @@ S_ASIG : ID ASIGNACION E
             std::string res = std::string($1.baseStr) + "[" + std::to_string($1.tam) + "]"; 
             CodeGen::emit("=", a1, "", res);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl;
+            contador_errores++;
         }
     }
   ;
@@ -382,7 +396,8 @@ S : BREAK SEMICOLON
         if (compatibles(tipoReturnFunc, $2.tipo)) {
             CodeGen::emit("return", "", "", $2.dir);
         } else {
-            std::cerr << "Error: Tipo de retorno incorrecto" << std::endl;
+            std::cerr << "Error Semantico: Tipo de retorno incorrecto" << std::endl;
+            contador_errores++;
         }
     }
   | S_ASIG SEMICOLON
@@ -491,7 +506,8 @@ E : E MAS E
             std::string a2 = ampliar($3.dir, $3.tipo, $$.tipo);
             CodeGen::emit("+", a1, a2, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl;
+            contador_errores++;
         }
     }
   | E MENOS E 
@@ -504,7 +520,8 @@ E : E MAS E
             std::string a2 = ampliar($3.dir, $3.tipo, $$.tipo);
             CodeGen::emit("-", a1, a2, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl;
+            contador_errores++;
         }
     }
   | E MULT E 
@@ -517,7 +534,8 @@ E : E MAS E
             std::string a2 = ampliar($3.dir, $3.tipo, $$.tipo);
             CodeGen::emit("*", a1, a2, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+            contador_errores++;
         }
     }
   | E DIV E 
@@ -530,7 +548,8 @@ E : E MAS E
             std::string a2 = ampliar($3.dir, $3.tipo, $$.tipo);
             CodeGen::emit("/", a1, a2, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+            contador_errores++;
         }
     }
   | E MOD E
@@ -541,7 +560,8 @@ E : E MAS E
             strcpy($$.dir, t.c_str());
             CodeGen::emit("%", $1.dir, $3.dir, $$.dir);
         } else {
-            std::cerr << "Error: El operador módulo requiere enteros" << std::endl;
+            std::cerr << "Error Semantico: El operador módulo requiere enteros" << std::endl; 
+            contador_errores++;
         }
     }
   | E OR E
@@ -552,7 +572,8 @@ E : E MAS E
             strcpy($$.dir, t.c_str());
             CodeGen::emit("||", $1.dir, $3.dir, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+            contador_errores++;
         }
     }
   | E AND E 
@@ -563,7 +584,8 @@ E : E MAS E
             strcpy($$.dir, t.c_str());
             CodeGen::emit("&&", $1.dir, $3.dir, $$.dir);
         } else {
-            std::cerr << "Error: Tipos incompatibles" << std::endl;
+            std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+            contador_errores++;
         }
     }
   | E MAYOR_QUE E
@@ -574,7 +596,8 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit(">", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+        contador_errores++; }
     }
   | E MENOR_QUE E 
     {
@@ -584,7 +607,8 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit("<", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+        contador_errores++; }
     }
   | E MAYOR_IGUAL E 
     {
@@ -594,7 +618,8 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit(">=", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+        contador_errores++; }
     }
   | E MENOR_IGUAL E 
     {
@@ -604,7 +629,7 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit("<=", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; contador_errores++; }
     }
   | E IGUAL E 
     {
@@ -614,7 +639,8 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit("==", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl; 
+                contador_errores++; }
     }
   | E NO_IGUAL E 
     {
@@ -624,7 +650,8 @@ E : E MAS E
             std::string t = CodeGen::newTemp();
             strcpy($$.dir, t.c_str());
             CodeGen::emit("!=", ampliar($1.dir, $1.tipo, maxT), ampliar($3.dir, $3.tipo, maxT), $$.dir);
-        } else { std::cerr << "Error: Tipos incompatibles" << std::endl; }
+        } else { std::cerr << "Error Semantico: Tipos incompatibles" << std::endl;
+                contador_errores++; }
     }
   | LPAREN E RPAREN
     {
@@ -659,7 +686,8 @@ E : E MAS E
             $$.tipo = pilaTs.bottom()->getType(id);
             strcpy($$.dir, id.c_str());
         } else {
-            std::cerr << "Error: El id no fue declarado: " << id << std::endl;
+            std::cerr << "Error Semantico: El id no fue declarado: " << id << std::endl;
+            contador_errores++;
         }
         if ($1) free($1);
     }
@@ -677,11 +705,13 @@ E : E MAS E
                 CodeGen::emit("call", id, std::to_string(argsList.size()), $$.dir);
             } else {
                 std::cerr << "Error Semantico: La lista de parametros no coincide con la lista de argumentos en la funcion '" << id << "'" << std::endl;
+                contador_errores++;
                 $$.tipo = 0;
             }
 
         } else {
             std::cerr << "Error Semantico: El identificador '" << id << "' no es una funcion declarada" << std::endl;
+            contador_errores++;
             $$.tipo = 0;
         }
         if ($1) free($1);
@@ -779,10 +809,12 @@ Z : ID DOT ID
                 $$.tipo = ts->getType($3);
                 $$.tam = ts->getDir($3);
             } else {
-                std::cerr << "Error: El campo '" << $3 << "' no existe en el struct" << std::endl;
+                std::cerr << "Error Semantico: El campo '" << $3 << "' no existe en el struct" << std::endl;
+                contador_errores++;
             }
         } else {
-            std::cerr << "Error: Variable '" << id << "' no declarada" << std::endl;
+            std::cerr << "Error Semantico: Variable '" << id << "' no declarada" << std::endl;
+            contador_errores++;
         }
         if ($1) free($1);
         if ($3) free($3);
@@ -798,7 +830,8 @@ Z : ID DOT ID
             $$.tipo = ts->getType($3);
             $$.tam = $1.tam + ts->getDir($3); 
         } else {
-            std::cerr << "Error: El campo '" << $3 << "' no existe" << std::endl;
+            std::cerr << "Error Semantico: El campo '" << $3 << "' no existe" << std::endl;
+            contador_errores++;
         }
         if ($3) free($3);
     }
@@ -808,4 +841,5 @@ Z : ID DOT ID
 
 void C1::Parser::error(const std::string& msg) {
     std::cerr << "Error de sintaxis: " << msg << std::endl;
+    contador_errores++;
 }

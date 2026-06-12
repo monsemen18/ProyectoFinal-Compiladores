@@ -1,17 +1,12 @@
+def int inicializar(int y) {
+    int x;
+    x = 10;
+    return x;
+}
+
 def int main() {
-    int i;
-    i = 0;
-    
-    while (i < 5) {
-        int temporal;
-        temporal = i * 2;
-        i = i + 1;
-    }
-    
-    // Error Semántico: 'temporal' fue declarada dentro del 'while'.
-    // Al salir de ese bloque, 'temporal' fue eliminada de la pila de ámbitos.
-    // El compilador debe arrojar un error de "Variable no declarada".
-    i = temporal;
-    
+    int resultado;
+    // Error: Se llama a la función sin pasarle argumentos
+    resultado = inicializar(); 
     return 0;
 }

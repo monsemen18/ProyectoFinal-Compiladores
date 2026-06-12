@@ -3,6 +3,8 @@
 #include "headers/Lexer.hpp"
 #include "Parser.hpp"
 
+int contador_errores = 0;
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         std::cerr << "Uso: ./comp <archivo_fuente>" << std::endl;
@@ -26,14 +28,14 @@ int main(int argc, char *argv[]) {
 
     fb.close();
 
-    if (result == 0) {
+    if (result == 0 && contador_errores == 0) {
         std::cout << std::endl;
         std::cout << "-------------------------------------------" << std::endl;
         std::cout << "Analisis completado exitosamente." << std::endl;
     } else {
         std::cout << std::endl;
         std::cout << "-------------------------------------------" << std::endl;
-        std::cout << "El analisis termino con errores." << std::endl;
+        std::cout << "El analisis termino con " << contador_errores << " errores." << std::endl;
     }
 
     return result;
