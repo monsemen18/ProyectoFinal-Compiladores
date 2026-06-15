@@ -1,0 +1,20 @@
+struct Rectangulo {
+    float base;
+    float altura;
+};
+
+struct Rectangulo figura;
+
+def int main() {
+    float resultado;
+    
+    figura.base = 10.0;
+    figura.altura = 5.0;
+    
+    // Error Semántico: El acceso a la estructura es sintácticamente correcto,
+    // pero la propiedad 'profundidad' no fue declarada en la definición original de 'Rectangulo'.
+    // El compilador debe arrojar un error indicando que el miembro no existe en el struct.
+    figura.profundidad = 2.0;
+    
+    return 0;
+}

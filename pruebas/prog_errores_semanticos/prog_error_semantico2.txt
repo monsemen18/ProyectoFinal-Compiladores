@@ -1,0 +1,22 @@
+struct Nodo {
+    int id;
+    float peso;
+};
+
+struct Nodo mi_nodo;
+
+def int main() {
+    int x;
+    x = 10;
+    
+    mi_nodo.id = 1;
+    mi_nodo.peso = 5.5;
+    
+    // Error Semántico: El identificador 'x' es de tipo 'int', 
+    // pero 'mi_nodo' es de tipo 'struct Nodo'. 
+    // No existe ninguna regla aritmética válida para sumar un entero con una estructura completa.
+    // El compilador debe arrojar un error de "Tipos incompatibles".
+    x = x + mi_nodo;
+    
+    return 0;
+}

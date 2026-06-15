@@ -1,0 +1,17 @@
+int a, b, c;
+float x, y, z;
+
+// comentario 
+def int main() {
+    a = 10;
+    b = 5;
+    c = 2;
+    x = 1.5;
+
+    a = a + b * c;
+    c = (a + b) * c;
+    z = (a + b) * x;
+    y = z + (x / 2.0);
+
+    return 0;
+}

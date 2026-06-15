@@ -1,0 +1,7 @@
+def int main() {
+    float totalPago;
+    
+    totalPago = $1500.0;
+    
+    return 0;
+}

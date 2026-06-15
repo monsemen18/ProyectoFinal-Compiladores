@@ -1,0 +1,8 @@
+int global;
+
+def int main() {
+    int @contador;
+    @contador = 10;
+    
+    return 0;
+}
